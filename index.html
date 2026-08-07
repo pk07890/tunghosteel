@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>桃園．觀音診所導覽 / คลินิกในเขตกวนอิม เถาหยวน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+Thai:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17323F;
+    --ink-soft:#3E5964;
+    --paper:#EEF0E8;
+    --paper-raised:#F7F8F2;
+    --line:#C9CDBE;
+    --amber:#E3A73E;
+    --amber-dark:#B9822A;
+
+    --c-eye:#2F8F9D;
+    --c-bone:#B85C2E;
+    --c-ent:#7A4B8C;
+    --c-med:#3B7A57;
+    --c-dental:#3A5FA0;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans TC','Noto Sans Thai',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  body[data-lang="th"] { font-family:'Noto Sans Thai','Noto Sans TC',sans-serif; }
+
+  [data-zh], [data-th]{ display:none; }
+  body[data-lang="zh"] [data-zh]{ display:inline; }
+  body[data-lang="zh"] [data-zh].block{ display:block; }
+  body[data-lang="th"] [data-th]{ display:inline; }
+  body[data-lang="th"] [data-th].block{ display:block; }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  /* ===== Header : signage board ===== */
+  .board{
+    background:var(--ink);
+    color:var(--paper-raised);
+    border-bottom:6px solid var(--amber);
+    position:relative;
+    overflow:hidden;
+  }
+  .board::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 26px);
+    pointer-events:none;
+  }
+  .board-inner{
+    max-width:920px;
+    margin:0 auto;
+    padding:34px 24px 28px;
+    position:relative;
+  }
+  .board-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+  }
+  .route-tag{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:.14em;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:'Space Grotesk','Noto Sans TC',sans-serif;
+    font-weight:700;
+    font-size:clamp(26px,4.6vw,42px);
+    line-height:1.15;
+    margin:0 0 6px;
+    letter-spacing:-.01em;
+  }
+  .sub{
+    font-size:15px;
+    color:#C9D6D2;
+    max-width:520px;
+    line-height:1.6;
+    margin:8px 0 0;
+  }
+
+  /* language toggle - flip sign */
+  .lang-toggle{
+    display:flex;
+    border:2px solid var(--amber);
+    border-radius:4px;
+    overflow:hidden;
+    flex-shrink:0;
+    background:#0F252F;
+  }
+  .lang-toggle button{
+    appearance:none;
+    border:none;
+    background:transparent;
+    color:#8FA6A4;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:10px 18px;
+    cursor:pointer;
+    letter-spacing:.04em;
+    transition:background .15s, color .15s;
+  }
+  .lang-toggle button.active{
+    background:var(--amber);
+    color:#1B2B23;
+  }
+  .lang-toggle .divider{ width:2px; background:var(--amber); }
+
+  /* legend strip */
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 18px;
+    margin-top:24px;
+    padding-top:18px;
+    border-top:1px solid rgba(255,255,255,0.14);
+  }
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:12.5px;
+    color:#C9D6D2;
+  }
+  .legend-dot{ width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+
+  /* ===== controls ===== */
+  .controls{
+    max-width:920px;
+    margin:0 auto;
+    padding:22px 24px 4px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+  }
+  .search-box{
+    flex:1 1 220px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--paper-raised);
+    border:1.5px solid var(--line);
+    border-radius:4px;
+    padding:9px 12px;
+  }
+  .search-box svg{ flex-shrink:0; opacity:.55; }
+  .search-box input{
+    border:none;
+    background:transparent;
+    outline:none;
+    font-size:14.5px;
+    font-family:inherit;
+    color:var(--ink);
+    width:100%;
+  }
+  .pill{
+    border:1.5px solid var(--line);
+    background:var(--paper-raised);
+    color:var(--ink-soft);
+    border-radius:20px;
+    padding:8px 15px;
+    font-size:13.5px;
+    font-weight:500;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .12s;
+  }
+  .pill.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--paper-raised);
+  }
+  .pill-dot{
+    display:inline-block;
+    width:8px;height:8px;
+    border-radius:50%;
+    margin-right:6px;
+    vertical-align:middle;
+  }
+
+  /* ===== list ===== */
+  .list{
+    max-width:920px;
+    margin:0 auto;
+    padding:18px 24px 60px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .card{
+    background:var(--paper-raised);
+    border:1.5px solid var(--line);
+    border-left:8px solid var(--ink);
+    border-radius:3px;
+    padding:16px 18px;
+    display:flex;
+    gap:16px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .card:hover{
+    transform:translateX(2px);
+    box-shadow:3px 4px 0 rgba(23,50,63,0.08);
+  }
+  .card-main{ min-width:220px; flex:1 1 260px; }
+  .card-index{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:.08em;
+    display:block;
+    margin-bottom:4px;
+  }
+  .clinic-name{
+    font-family:'Space Grotesk','Noto Sans TC','Noto Sans Thai',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    font-weight:700;
+    padding:3px 10px 3px 8px;
+    border-radius:20px;
+    color:#fff;
+    margin-bottom:8px;
+  }
+  .badge-dot{ width:6px; height:6px; border-radius:50%; background:#fff; opacity:.9; }
+  .address{
+    font-size:14px;
+    color:var(--ink-soft);
+    line-height:1.55;
+    margin:0;
+  }
+  .maps-btn{
+    flex-shrink:0;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--ink);
+    color:var(--paper-raised);
+    text-decoration:none;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    padding:10px 16px;
+    border-radius:4px;
+    border:1.5px solid var(--ink);
+    transition:background .15s,color .15s;
+    white-space:nowrap;
+  }
+  .maps-btn:hover{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:#1B2B23;
+  }
+  .maps-btn svg{ flex-shrink:0; }
+
+  .empty{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+    font-size:15px;
+    display:none;
+  }
+
+  footer{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 24px 40px;
+    color:var(--ink-soft);
+    font-size:12.5px;
+    line-height:1.7;
+    border-top:1px solid var(--line);
+    padding-top:18px;
+  }
+
+  @media (max-width:560px){
+    .board-top{ flex-direction:column; }
+    .lang-toggle{ align-self:flex-start; }
+    .card{ padding:14px; }
+    .maps-btn{ width:100%; justify-content:center; }
+  }
+
+  :focus-visible{ outline:3px solid var(--amber); outline-offset:2px; }
+</style>
+</head>
+<body data-lang="zh">
+
+<div class="board">
+  <div class="board-inner">
+    <div class="board-top">
+      <div>
+        <p class="route-tag">桃園市．觀音區 ／ อำเภอกวนอิม เมืองเถาหยวน</p>
+        <h1>
+          <span data-zh>草漯診所訊息</span>
+          <span data-th>ข้อมูลคลินิกเฉ่าท่า</span>
+        </h1>
+        <p class="sub">
+          <span data-zh block>收錄觀音、大園地區診所資訊，附中泰文對照與 Google 地圖路線，方便就醫查詢。</span>
+          <span data-th block>ข้อมูลคลินิกในเขตกวนอิม-ต้าหยวน พร้อมคำแปลไทย-จีน และลิงก์ Google Maps เพื่อค้นหาเส้นทางไปคลินิก</span>
+        </p>
+      </div>
+      <div class="lang-toggle" role="group" aria-label="language switch">
+        <button id="btn-zh" class="active" onclick="setLang('zh')">中文</button>
+        <div class="divider"></div>
+        <button id="btn-th" onclick="setLang('th')">ไทย</button>
+      </div>
+    </div>
+
+    <div class="legend" id="legend"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="search-box">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="search" type="text" data-zh-placeholder="搜尋診所名稱或地址..." data-th-placeholder="ค้นหาชื่อคลินิกหรือที่อยู่..." oninput="render()">
+  </div>
+  <div id="filters" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+</div>
+
+<div class="list" id="list"></div>
+<div class="empty" id="empty">
+  <span data-zh>找不到符合的診所</span>
+  <span data-th>ไม่พบคลินิกที่ค้นหา</span>
+</div>
+
+<footer>
+  <span data-zh block>資料來源：使用者提供之診所清單。地址若有異動請以現場招牌或衛生福利部醫療機構查詢系統為準。</span>
+  <span data-th block>ข้อมูลจากรายชื่อคลินิกที่ผู้ใช้ให้มา หากที่อยู่มีการเปลี่ยนแปลง กรุณาตรวจสอบกับป้ายหน้าคลินิกหรือระบบตรวจสอบสถานพยาบาลของกระทรวงสาธารณสุขไต้หวันอีกครั้ง</span>
+</footer>
+
+<script>
+const SPECIALTIES = {
+  eye:    { zh:"眼科",     th:"จักษุ (ตา)",         color:"var(--c-eye)"    },
+  bone:   { zh:"骨科",     th:"กระดูกและข้อ",       color:"var(--c-bone)"   },
+  ent:    { zh:"耳鼻喉科", th:"หู คอ จมูก",         color:"var(--c-ent)"    },
+  med:    { zh:"內科",     th:"อายุรกรรม",          color:"var(--c-med)"    },
+  dental: { zh:"牙醫",     th:"ทันตกรรม",           color:"var(--c-dental)" }
+};
+
+const CLINICS = [
+  { zh:"慧明眼科",       th:"คลินิกจักษุฮุ่ยหมิง",         spec:"eye",
+    addr_zh:"桃園市大園區大園里新生路133號",
+    addr_th:"เลขที่ 133 ถนนซินเซิง หมู่บ้านต้าหยวน เขตต้าหยวน เมืองเถาหยวน" },
+  { zh:"泰安診所",       th:"คลินิกไท่อัน",                spec:"bone",
+    addr_zh:"桃園市觀音區草新里大觀路二段79號",
+    addr_th:"เลขที่ 79 ถนนต้ากวน ช่วงที่ 2 หมู่บ้านเฉ่าซิน เขตกวนอิม เมืองเถาหยวน" },
+  { zh:"全心診所",       th:"คลินิกฉวนซิน",                spec:"ent",
+    addr_zh:"桃園市觀音區草漯里大觀路二段182號",
+    addr_th:"เลขที่ 182 ถนนต้ากวน ช่วงที่ 2 หมู่บ้านเฉ่าท่า เขตกวนอิม เมืองเถาหยวน" },
+  { zh:"聯合診所",       th:"คลินิกเหลียนเหอ",             spec:"ent",
+    addr_zh:"桃園市觀音區草新里四維路110號",
+    addr_th:"เลขที่ 110 ถนนซื่อเหว่ย หมู่บ้านเฉ่าซิน เขตกวนอิม เมืองเถาหยวน" },
+  { zh:"金鶯診所",       th:"คลินิกจินอิง",                spec:"med",
+    addr_zh:"桃園市觀音區草新里大觀路二段113號",
+    addr_th:"เลขที่ 113 ถนนต้ากวน ช่วงที่ 2 หมู่บ้านเฉ่าซิน เขตกวนอิม เมืองเถาหยวน" },
+  { zh:"草漯牙醫診所",   th:"คลินิกทันตกรรมเฉ่าท่า",       spec:"dental",
+    addr_zh:"桃園市觀音區草漯里大觀路二段180號",
+    addr_th:"เลขที่ 180 ถนนต้ากวน ช่วงที่ 2 หมู่บ้านเฉ่าท่า เขตกวนอิม เมืองเถาหยวน" },
+  { zh:"草漯謝謝診所",   th:"คลินิกเฉ่าท่าเซี่ยเซี่ย",     spec:"ent",
+    addr_zh:"桃園市觀音區草漯里福德街277號",
+    addr_th:"เลขที่ 277 ถนนฝูเต๋อ หมู่บ้านเฉ่าท่า เขตกวนอิม เมืองเถาหยวน" },
+  { zh:"尚恩牙醫診所",   th:"คลินิกทันตกรรมซ่างเอิน",      spec:"dental",
+    addr_zh:"桃園市觀音區草新里大觀路二段265號",
+    addr_th:"เลขที่ 265 ถนนต้ากวน ช่วงที่ 2 หมู่บ้านเฉ่าซิน เขตกวนอิม เมืองเถาหยวน" },
+  { zh:"揚洋牙醫診所",   th:"คลินิกทันตกรรมหยางหยาง",      spec:"dental",
+    addr_zh:"桃園市觀音區富林里大觀路二段236號",
+    addr_th:"เลขที่ 236 ถนนต้ากวน ช่วงที่ 2 หมู่บ้านฟู่หลิน เขตกวนอิม เมืองเถาหยวน" }
+];
+
+let lang = 'zh';
+let activeFilter = 'all';
+
+function setLang(l){
+  lang = l;
+  document.body.setAttribute('data-lang', l);
+  document.getElementById('btn-zh').classList.toggle('active', l==='zh');
+  document.getElementById('btn-th').classList.toggle('active', l==='th');
+  const search = document.getElementById('search');
+  search.placeholder = search.getAttribute('data-'+l+'-placeholder');
+  buildLegend();
+  buildFilters();
+  render();
+}
+
+function buildLegend(){
+  const legend = document.getElementById('legend');
+  legend.innerHTML = Object.entries(SPECIALTIES).map(([k,v])=>`
+    <div class="legend-item">
+      <span class="legend-dot" style="background:${v.color}"></span>
+      <span>${v[lang]}</span>
+    </div>`).join('');
+}
+
+function buildFilters(){
+  const filters = document.getElementById('filters');
+  const allLabel = lang==='zh' ? '全部' : 'ทั้งหมด';
+  let html = `<button class="pill ${activeFilter==='all'?'active':''}" onclick="setFilter('all')">${allLabel}</button>`;
+  html += Object.entries(SPECIALTIES).map(([k,v])=>`
+    <button class="pill ${activeFilter===k?'active':''}" onclick="setFilter('${k}')">
+      <span class="pill-dot" style="background:${v.color}"></span>${v[lang]}
+    </button>`).join('');
+  filters.innerHTML = html;
+}
+
+function setFilter(f){
+  activeFilter = f;
+  buildFilters();
+  render();
+}
+
+function render(){
+  const q = (document.getElementById('search').value || '').trim().toLowerCase();
+  const list = document.getElementById('list');
+  const empty = document.getElementById('empty');
+
+  const filtered = CLINICS.filter(c=>{
+    if(activeFilter!=='all' && c.spec!==activeFilter) return false;
+    if(!q) return true;
+    const hay = (c.zh+c.th+c.addr_zh+c.addr_th).toLowerCase();
+    return hay.includes(q);
+  });
+
+  if(filtered.length===0){
+    list.innerHTML='';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+
+  list.innerHTML = filtered.map((c,i)=>{
+    const spec = SPECIALTIES[c.spec];
+    const name = lang==='zh' ? c.zh : c.th;
+    const addr = lang==='zh' ? c.addr_zh : c.addr_th;
+    const idx = String(i+1).padStart(2,'0');
+    const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(c.addr_zh + ' ' + c.zh);
+    const openLabel = lang==='zh' ? '在地圖上開啟' : 'เปิดใน Google Maps';
+    return `
+    <div class="card" style="border-left-color:${spec.color}">
+      <div class="card-main">
+        <span class="card-index mono">NO. ${idx}</span>
+        <h2 class="clinic-name">${name}</h2>
+        <span class="badge" style="background:${spec.color}"><span class="badge-dot"></span>${spec[lang]}</span>
+        <p class="address">${addr}</p>
+      </div>
+      <a class="maps-btn" href="${mapsUrl}" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        ${openLabel}
+      </a>
+    </div>`;
+  }).join('');
+}
+
+buildLegend();
+buildFilters();
+render();
+</script>
+
+</body>
+</html>
