@@ -253,6 +253,11 @@
     box-shadow:inset 0 -4px 0 var(--amber);
   }
   .cat-tab.active .count{ background:rgba(255,255,255,0.16); }
+  @media (max-width:560px){
+    .cat-tabs{ gap:6px; }
+    .cat-tab{ flex-direction:column; gap:3px; padding:10px 4px; font-size:14px; line-height:1.2; text-align:center; }
+    .cat-tab svg{ width:16px; height:16px; }
+  }
 
   /* ===== controls ===== */
   .controls{
@@ -544,8 +549,8 @@
 </div>
 
 <footer>
-  <span data-zh block>資料來源：使用者提供之診所及量販店清單。地址或營業資訊若有異動，請以現場或官方公告為準。</span>
-  <span data-th block>ข้อมูลจากรายชื่อคลินิกและซูเปอร์มาร์เก็ตที่ผู้ใช้ให้มา หากที่อยู่หรือข้อมูลร้านมีการเปลี่ยนแปลง กรุณาตรวจสอบกับสถานที่จริงหรือประกาศทางการอีกครั้ง</span>
+  <span data-zh block>資料來源：使用者提供之診所、量販店及市場清單。地址或營業資訊若有異動，請以現場或官方公告為準。</span>
+  <span data-th block>ข้อมูลจากรายชื่อคลินิก ซูเปอร์มาร์เก็ต และตลาดที่ผู้ใช้ให้มา หากที่อยู่หรือข้อมูลร้านมีการเปลี่ยนแปลง กรุณาตรวจสอบกับสถานที่จริงหรือประกาศทางการอีกครั้ง</span>
 </footer>
 
 <script>
@@ -563,7 +568,8 @@ const REGIONS = {
   guanyin: { zh:"觀音", th:"กวนอิม" },
   dayuan:  { zh:"大園", th:"ต้าหยวน" },
   xinpo:   { zh:"新坡", th:"ซินพัว" },
-  caolei:  { zh:"草漯", th:"เฉ่าท่า" }
+  caolei:  { zh:"草漯", th:"เฉ่าท่า" },
+  xinwu:   { zh:"新屋", th:"ซินอู" }
 };
 
 const CLINICS = [
@@ -685,9 +691,37 @@ const STORES = [
     map:"https://maps.google.com/maps?vet=10CAAQoqAOahcKEwiAwbOIj7uXAxUAAAAAHQAAAAAQJg..i&sca_esv=b806ac0cce3d6a6a&udm&fvr=1&pvq=Cg0vZy8xMXZwcXpyZmoyIg8KCee-juW7ieekvhACGAOJAUEbPO6iKDUd&lqi=Cgnnvo7lu4nnpL4iA4gBAUiC7K7v1rqAgAhaHRAAEAEQAhgAGAEYAiIL576OIOW7iSDnpL4qAggCkgELc3VwZXJtYXJrZXQ&cs=0&um=1&ie=UTF-8&fb=1&gl=tw&sa=X&ftid=0x3468279c44f56c1d:0x1d3528a2ee3c1b41" }
 ];
 
+const MARKET_TYPES = {
+  market: { zh:"傳統市場", th:"ตลาดสด", color:"#9A5B2E" }
+};
+
+const MARKETS = [
+  { zh:"新屋市場", th:"ตลาดซินอู", spec:"market", region:"xinwu",
+    addr_zh:"桃園市新屋區新生里中正路102-108號",
+    addr_th:"เลขที่ 102-108 ถนนจงเจิ้ง หมู่บ้านซินเซิง เขตซินอู เมืองเถาหยวน",
+    map:"https://maps.google.com/maps?vet=10CAAQoqAOahcKEwjA6buGsLuXAxUAAAAAHQAAAAAQCA..i&sca_esv=9b409f63e8a1ac33&udm&fvr=1&pvq=Cg0vZy8xMWM0NjZ5bDhfIgwKBuW4guWgtBACGAM&lqi=CgzmlrDlsYvluILloLRIn5K745CrgIAIWhUQARgAGAEiDeaWsOWxiyDluILloLSSARJ0cmFkaXRpb25hbF9tYXJrZXSaASNDaFpEU1VoTk1HOW5TMFZKUTBGblNVTm9hMlpIYWxGUkVBRfoBBAgAEAo&cs=0&um=1&ie=UTF-8&fb=1&gl=tw&sa=X&ftid=0x346825a2dae13fc3:0x4b24b1d45df1e22e" },
+  { zh:"大園市場", th:"ตลาดต้าหยวน", spec:"market", region:"dayuan",
+    addr_zh:"桃園市大園區大園里忠孝三街19號",
+    addr_th:"เลขที่ 19 ถนนจงเซี่ยวสาย 3 หมู่บ้านต้าหยวน เขตต้าหยวน เมืองเถาหยวน",
+    map:"https://maps.google.com/maps?vet=10CAAQoqAOahcKEwjYyO-vsLuXAxUAAAAAHQAAAAAQDg..i&sca_esv=9b409f63e8a1ac33&udm&fvr=1&pvq=CgsvZy8xdGRwcGRoNSIVCg_ojYnmvK_oj5zluILloLQQAhgD&lqi=Cg_ojYnmvK_oj5zluILloLRI5ePqyuWAgIAIWh4QABABEAIQAxgDIhLojYkg5ryvIOiPnCDluILloLSSARJ0cmFkaXRpb25hbF9tYXJrZXSaASRDaGREU1VoTk1HOW5TMFZKUTBGblNVUkNYMDlmTUhSM1JSQUL6AQQIABAG&cs=0&um=1&ie=UTF-8&fb=1&gl=tw&sa=X&ftid=0x3468209e9693eb91:0x413f8dacfdfb90d1" },
+  { zh:"草漯市場（保障宮旁）", th:"ตลาดเฉ่าท่า (ข้างศาลเจ้าเป่าจาง)", spec:"market", region:"caolei",
+    addr_zh:"桃園市觀音區草新里大觀路一段579號（保障宮旁）",
+    addr_th:"ข้างศาลเจ้าเป่าจาง เลขที่ 579 ถนนต้ากวน ช่วงที่ 1 หมู่บ้านเฉ่าซิน เขตกวนอิม เมืองเถาหยวน",
+    map:"https://maps.google.com/maps?vet=10CAAQoqAOahcKEwiYp5HWsbuXAxUAAAAAHQAAAAAQCQ..i&sca_esv=b806ac0cce3d6a6a&udm&fvr=1&pvq=CgwvZy8xMWR5aHNkYjMiFQoP6I2J5ryv5L-d6Zqc5a6uEAIYAw&lqi=Cg_ojYnmvK_kv53pmpzlrq5Iw-Lw17OBgIAIWigQABABEAIQAxgAGAEYAhgDIhLojYkg5ryvIOS_nemanCDlrq4qAggCkgEQcGxhY2Vfb2Zfd29yc2hpcJoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQydGtNbVZzVW1wUFJGWk1UMGMxVkdKNlpESk9lbEpGVTI1YU5GSkhZeEFC-gEECAAQJQ&cs=0&um=1&ie=UTF-8&fb=1&gl=tw&sa=X&ftid=0x34682719b9696cc9:0xaeb493af66b35409" },
+  { zh:"新坡市場（億客成前）", th:"ตลาดซินพัว (หน้าซูเปอร์มาร์เก็ต IKC)", spec:"market", region:"xinpo",
+    addr_zh:"桃園市觀音區大同里中山路二段688號（億客成新坡店前）",
+    addr_th:"หน้าซูเปอร์มาร์เก็ต IKC เลขที่ 688 ถนนจงซาน ช่วงที่ 2 หมู่บ้านต้าถง เขตกวนอิม เมืองเถาหยวน",
+    map:"https://maps.google.com/maps?vet=10CAAQoqAOahcKEwjQ2qy8sbuXAxUAAAAAHQAAAAAQDA..i&sca_esv=b806ac0cce3d6a6a&udm&fvr=1&pvq=Cg0vZy8xMWI2cnl6cDMyIg8KCeWEhOWuouWfjhACGAM&lqi=CgnlhITlrqLln45I4qj9_pqqgIAIWh0QABABEAIYABgBGAIiC-WEhCDlrqIg5Z-OKgIIApIBC3N1cGVybWFya2V0&cs=0&um=1&ie=UTF-8&fb=1&gl=tw&sa=X&ftid=0x34682691d6a5b677:0x67fd233abb91b48b" },
+  { zh:"觀音市場（甘泉寺旁）", th:"ตลาดกวนอิม (ข้างวัดกานเฉวียน)", spec:"market", region:"guanyin",
+    addr_zh:"桃園市觀音區觀音里甘泉街1號（甘泉寺旁）",
+    addr_th:"ข้างวัดกานเฉวียน เลขที่ 1 ถนนกานเฉวียน หมู่บ้านกวนอิม เขตกวนอิม เมืองเถาหยวน",
+    map:"https://maps.google.com/maps?vet=10CAAQoqAOahcKEwjY3MDxsbuXAxUAAAAAHQAAAAAQCQ..i&sca_esv=b806ac0cce3d6a6a&udm&fvr=1&pvq=CgsvZy8xNTVyaGg1eiIMCgbnlJjms4kQAhgD&lqi=Cgzop4Dpn7PnlJjms4lIvvne25SAgIAIWhkQARgAGAEiDeingOmfsyDnlJjms4kqAggCkgEQcGxhY2Vfb2Zfd29yc2hpcJoBJENoZERTVWhOTUc5blMwVkpRMEZuU1VNdFgzSTJjVEZSUlJBQvoBBAgAEAw&cs=0&um=1&ie=UTF-8&fb=1&gl=tw&sa=X&ftid=0x34682620de84ac6d:0x436a1f77aae0d2a2" }
+];
+
 const CATS = {
   clinic: { zh:"診所",   th:"คลินิก",          types:SPECIALTIES, data:CLINICS, typeLabel:{ zh:"科別", th:"แผนก" } },
-  store:  { zh:"量販店", th:"ซูเปอร์มาร์เก็ต", types:STORE_TYPES, data:STORES,  typeLabel:{ zh:"品牌", th:"แบรนด์" } }
+  store:  { zh:"量販店", th:"ซูเปอร์มาร์เก็ต", types:STORE_TYPES, data:STORES,  typeLabel:{ zh:"品牌", th:"แบรนด์" } },
+  market: { zh:"市場",   th:"ตลาด",            types:MARKET_TYPES, data:MARKETS, typeLabel:{ zh:"類型", th:"ประเภท" } }
 };
 
 let lang = 'zh';
@@ -714,6 +748,7 @@ function setLang(l){
 function buildCatTabs(){
   const icons = {
     clinic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>',
+    market:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v1.5a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13.5V20h14v-6.5"/><path d="M10 20v-4h4v4"/></svg>',
     store:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 7H6"/></svg>'
   };
   document.getElementById('cat-tabs').innerHTML = Object.entries(CATS).map(([k,v])=>`
@@ -721,11 +756,14 @@ function buildCatTabs(){
       ${icons[k]}<span>${v[lang]}</span><span class="count">${v.data.length}</span>
     </button>`).join('');
   document.getElementById('type-label').textContent = CATS[activeCat].typeLabel[lang];
+  document.getElementById('type-label').parentElement.style.display = Object.keys(CATS[activeCat].types).length > 1 ? '' : 'none';
 }
 
 function setCat(c){
   activeCat = c;
   activeFilter = 'all';
+  if(!CATS[c].data.some(x=>x.region===activeRegion)) activeRegion = 'all';
+  buildRegionFilters();
   buildCatTabs();
   buildLegend();
   buildFilters();
@@ -756,7 +794,8 @@ function buildRegionFilters(){
   const el = document.getElementById('region-filters');
   const allLabel = lang==='zh' ? '全部' : 'ทั้งหมด';
   let html = `<button class="pill region ${activeRegion==='all'?'active':''}" onclick="setRegion('all')">${allLabel}</button>`;
-  html += Object.entries(REGIONS).map(([k,v])=>`
+  const present = new Set(CATS[activeCat].data.map(x=>x.region));
+  html += Object.entries(REGIONS).filter(([k])=>present.has(k)).map(([k,v])=>`
     <button class="pill region ${activeRegion===k?'active':''}" onclick="setRegion('${k}')">${v[lang]}</button>`).join('');
   el.innerHTML = html;
 }
@@ -1080,7 +1119,7 @@ async function toggleHours(btn, day){
 
 async function loadItems(){
   const g = statGen, box = document.getElementById('sp-items'), status = document.getElementById('sp-status');
-  const all = [...CLINICS.map(c=>({c, cat:'診所'})), ...STORES.map(c=>({c, cat:'量販店'}))];
+  const all = [...CLINICS.map(c=>({c, cat:'診所'})), ...STORES.map(c=>({c, cat:'量販店'})), ...MARKETS.map(c=>({c, cat:'市場'}))];
   const res = [];
   for(let i=0; i<all.length; i++){
     status.textContent = `讀取點擊排行… ${i+1}/${all.length}`;
